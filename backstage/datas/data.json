@@ -1,0 +1,38 @@
+[{
+	"id": "1",
+	"pid": "0",
+	"title": "系统管理",
+	"icon": "&#xe75c;",
+	"url": "",
+	"spread": false,
+	"children": [{
+		"id": "2",
+		"pid": "0",
+		"title": "后台首页",
+		"icon": "&#xe79c;",
+		"url": "main.html",
+		"spread": false
+	}]
+},{
+	"id": "1",
+	"pid": "0",
+	"title": "风险管控",
+	"icon": "&#xea3b;",
+	"url": "",
+	"spread": false,
+	"children": [{
+		"id": "2",
+		"pid": "0",
+		"title": "用户管理",
+		"icon": "&#xe70b;",
+		"url": "html/user_manage/user_manage.html",
+		"spread": false
+	},{
+		"id": "3",
+		"pid": "0",
+		"title": "部门管理",
+		"icon": "&#xe8f4;",
+		"url": "html/department_manage/department_manage.html",
+		"spread": false
+	}]
+}]

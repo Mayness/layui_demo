@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>部门管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="Author" content="ksi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <!-- load css -->
+  <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+  <style>
+    .department_box{
+      display: flex;
+    }
+    #select_box{
+      padding: 10px 10px 0 30px;
+      min-width: 160px;
+    }
+    .department_box .layui-form{
+      margin: 5px 30px 5px 0;
+    }
+    .department_detailShow{
+      position: relative;
+    }
+    .department_detailShow p{
+      margin: 10px 0;
+    }
+    .search_header{
+      position: absolute;
+      width: 100%;
+      top: 4px;
+      z-index: 2;
+    }
+    .department_detailShow .layui-elem-quote{
+    }
+    .department_detailShow .layui-elem-quote .search_header_main,.department_detailShow .search_header_detail{
+      display: flex;
+    }
+    .department_detailShow .layui-elem-quote .search_header_main .layui-input{
+      width: 20%;
+    }
+    .department_detailShow .layui-elem-quote .search_header_main .layui-btn{
+      margin-left: 10px;
+    }
+    .department_detailShow .layui-elem-quote .search_header_main .btn_group_right{
+      display: flex;
+      justify-content: flex-end;
+      flex: 1;
+    }
+    .table_event .larry-icon{
+      margin-right: 3px;
+    }
+    .show_more_icon{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fd6d40;
+      color:  #fd6d40;
+      width: 30px;
+      height: 36px;
+      border-radius: 3px;
+      margin-left: 5px;
+      cursor: pointer;
+      transition: .3s;
+    }
+    .show_more_icon .larry-icon{
+      position: relative;
+      transform: rotate(90deg);
+    }
+    .show_more_icon:hover{
+      background: #fd6d40;
+      color: #fff;
+    }
+    .department_detailShow .search_header_detail{
+      margin-top: 10px;
+    }
+    .layui-inline label{
+      padding-left: 0;
+      padding-right: 3px;
+      width: auto;
+    }
+    #demo{
+      margin-top: 120px;
+    }
+  </style>
+</head>
+<body>
+<div class="department_box content_padding">
+  <div id="select_box"></div>
+  <div class="department_detailShow">
+    <div class="search_header">
+      <blockquote class="layui-elem-quote">
+        <div class="search_header_main">
+          <input type="text" placeholder="搜索" class="layui-input">
+          <button class="layui-btn">搜索</button>
+          <div class="show_more_icon">
+            <i class="larry-icon">&#xe864;</i>
+          </div>
+          <div class="btn_group_right">
+            <button class="layui-btn layui-btn-danger">批量删除</button>
+            <button class="layui-btn layui-btn-normal">新增</button>
+          </div>
+        </div>
+        <div class="search_header_detail">
+          <div class="layui-inline">
+            <label class="layui-form-label">日期范围：</label>
+            <div class="layui-input-inline">
+              <input type="text" class="layui-input" id="test6" placeholder=" - ">
+            </div>
+          </div>
+        </div>
+      </blockquote>
+    </div>
+    <table id="demo" lay-filter="test"></table>
+  </div>
+</div>
+<!-- 加载js文件-->
+<script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+<script>
+  layui.use(['form','laytpl', 'jquery', 'table', 'layer', 'laydate'], async () => {
+    const $ = layui.jquery
+    const form = layui.form
+    const table = layui.table
+    const layer = layui.layer
+    const laydate = layui.laydate
+
+    let crux = {main: null, second: null, third: null}
+    let select_box = select_tem.innerHTML
+    let view = document.getElementById('select_box')
+    let data = await getSelectData()
+    renderSelect(data, null, null)
+
+    // 选择主公司
+    form.on('select(parent_select)', function(select){
+      if(select.value){
+        let selectData = data.filter(item => {
+          item.selected = false
+          return item.value == select.value
+        })
+        selectData[0].selected = true
+        // 清除selected
+        crux_clear(selectData[0].children)
+        crux = {main: selectData[0].company, second: selectData[0], third: null}
+        renderSelect(data, crux.second.children, null)
+      }
+    });
+
+    // 选择子公司
+    form.on('select(child_select)', function(select){
+      let affi = null
+      if(select.value){
+        let selectData = crux.second.children.filter(item => {
+          item.selected = false
+          return item.value == select.value
+        })
+        selectData[0].selected = true
+        crux.third = selectData[0]
+        // 如果没有下一级部门则直接显示
+        if(selectData[0].children){
+          // 清除selected
+          crux_clear(selectData[0].children)
+          affi = selectData[0].children
+        }
+        renderSelect(data, crux.second.children, affi)
+      }
+    })
+
+    // 选择部门
+    form.on('select(affi_select)', function(select){
+      if(select.value){
+        let selectData = crux.third.children.filter(item => {
+          return item.value == select.value
+        })
+      }
+    })
+
+    // 请求数据
+    function getSelectData () {
+      return new Promise( resolve => {
+        $.ajax({
+          url: "../../datas/department_manage.json",
+          type: "get",
+          success(res) {
+            resolve(res)
+          },
+          error(err) {
+            console.log(`请求错误${err}`)
+          }
+        })
+      })
+    }
+    // 渲染dom
+    function renderSelect (data,childData,affiData) {
+      let child_data = childData || null
+      let affi_data = affiData || null
+      layui.laytpl(select_box).render({
+        parent_data: data,
+        child_data,
+        affi_data
+      }, html => {
+        view.innerHTML = html
+        form.render('select')
+      })
+    }
+    // 初始化页面高宽度
+    function init_page() {
+      $('.content_padding').height($(document).height())
+      $('.department_detailShow').width($(document).width()-$('#select_box').outerWidth())
+      $(window).resize(() => {
+        $('.content_padding').height($(document).height())
+        $('.department_detailShow').width($(document).width()-$('#select_box').outerWidth())
+      })
+    }
+    init_page()
+
+    // 表格
+    //第一个实例
+    table.render({
+      elem: '#demo',
+      url: '../../datas/user_manage.json', //数据接口
+      page: true, //开启分页
+      limit: 16,
+      cols: [[ //表头
+        {type:'checkbox', fixed: 'left'},
+        {field: 'id', title: '序号', width:80, sort: true, fixed: 'left'},
+        {field: 'company', width:180, title: '单位'},
+        {field: 'name', title: '姓名'},
+        {field: 'profession', title: '职业'},
+        {field: 'grade', title: '分数'},
+        {field: 'account', title: '账号'},
+        {field: 'phone', title: '联系电话'},
+        {fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+      ]]
+    })
+
+    $(".show_more_icon").mouseenter(() => {
+      layer.tips('更多查询条件', '.show_more_icon', {
+        tips: [2, '#FF5722'],
+        time: 2000
+      });
+    })
+
+    $(".show_more_icon").click(() => {
+      $(".show_more_icon .larry-icon").addClass('more')
+    })
+
+    //日期范围
+    laydate.render({
+      elem: '#test6'
+      ,range: true
+    });
+  })
+  function crux_clear(data){
+    for(let i of data){
+      i.selected = false
+    }
+  }
+
+</script>
+</body>
+</html>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs table_event" lay-event="edit"><i class="larry-icon">&#xe6b5;</i>编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs table_event" lay-event="del"><i class="larry-icon">&#xe9a4;</i>删除</a>
+</script>
+
+<script type="text/html" id="select_tem">
+  <div class="layui-form">
+    <div class="company_selectItem">
+      <p class="select_title">主公司</p>
+      <select name="interest" lay-filter="parent_select">
+        <option value=""></option>
+        {{# layui.each(d.parent_data, function(index, item){ }}
+        {{# if(item.selected){ }}
+        <option value="{{ item.value }}" selected>{{ item.company }}</option>
+        {{# }else{ }}
+        <option value="{{ item.value }}">{{ item.company }}</option>
+        {{# } }}
+        {{# }) }}
+      </select>
+    </div>
+  </div>
+  <div class="layui-form">
+    <div class="company_selectItem clear_class">
+      {{# if(d.child_data != null) { }}
+      <p class="select_title">子公司</p>
+      <select name="interest" lay-filter="child_select">
+        <option value=""></option>
+        {{# layui.each(d.child_data, function(index, item){ }}
+        {{# if(item.selected){ }}
+        <option value="{{ item.value }}" selected>{{ item.company }}</option>
+        {{# }else{ }}
+        <option value="{{ item.value }}">{{ item.company }}</option>
+        {{# } }}
+        {{# }) }}
+      </select>
+      {{# } }}
+    </div>
+  </div>
+  <div class="layui-form">
+    <div class="company_selectItem">
+      {{# if(d.affi_data != null) { }}
+      <p class="select_title">单位</p>
+      <select name="interest" lay-filter="affi_select">
+        <option value=""></option>
+        {{# layui.each(d.affi_data, function(index, item){ }}
+        <option value="{{ item.value }}">{{ item.company }}</option>
+        {{# }) }}
+      </select>
+      {{# } }}
+    </div>
+  </div>
+</script>

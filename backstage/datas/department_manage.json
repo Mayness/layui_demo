@@ -1,0 +1,70 @@
+[
+  {
+    "company": "主公司1",
+    "value": "1",
+    "children": [
+      {
+        "company": "子公司1",
+        "value": "1-1",
+        "type": "类型1-1"
+      },
+      {
+        "company": "子公司2",
+        "value": "1-2",
+        "type": "类型1-2"
+      }
+    ]
+  },{
+    "company": "主公司2",
+    "value": "2",
+    "children": [
+      {
+        "company": "子公司21",
+        "value": "2-1",
+        "type": "类型2-1"
+      }
+    ]
+  },{
+    "company": "主公司3",
+    "value": "3",
+    "children": [
+      {
+        "company": "子公司31",
+        "value": "3-1",
+        "children": [
+          {
+            "company": "单位311",
+            "value": "3-1-1",
+            "type": "类型3-1-1"
+          },
+          {
+            "company": "单位312",
+            "value": "3-1-2",
+            "type": "类型3-1-2"
+          }
+        ]
+      },
+      {
+        "company": "子公司32",
+        "value": "3-2",
+        "children": [
+          {
+            "company": "单位321",
+            "value": "3-2-1",
+            "type": "类型3-2-1"
+          },
+          {
+            "company": "单位322",
+            "value": "3-2-2",
+            "type": "类型3-2-2"
+          },
+          {
+            "company": "单位323",
+            "value": "3-2-3",
+            "type": "类型3-2-3"
+          }
+        ]
+      }
+    ]
+  }
+]

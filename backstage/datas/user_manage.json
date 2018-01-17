@@ -1,0 +1,143 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 16,
+  "data": [
+    {
+      "id": 1,
+      "company": "夹江供电公司",
+      "name": "用户1",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 2,
+      "company": "乐山供电公司",
+      "name": "用户2",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 3,
+      "company": "峨眉供电公司",
+      "name": "用户3",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 4,
+      "company": "乐山供电公司",
+      "name": "用户4",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 5,
+      "company": "乐山供电公司",
+      "name": "用户5",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 6,
+      "company": "夹江供电公司",
+      "name": "用户6",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 7,
+      "company": "乐山供电公司",
+      "name": "用户7",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 8,
+      "company": "峨眉供电公司",
+      "name": "用户8",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 9,
+      "company": "夹江供电公司",
+      "name": "用户1",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 10,
+      "company": "乐山供电公司",
+      "name": "用户2",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 11,
+      "company": "峨眉供电公司",
+      "name": "用户3",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 12,
+      "company": "乐山供电公司",
+      "name": "用户4",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 13,
+      "company": "乐山供电公司",
+      "name": "用户5",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 14,
+      "company": "夹江供电公司",
+      "name": "用户6",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    },
+    {
+      "id": 15,
+      "company": "乐山供电公司",
+      "name": "用户7",
+      "profession": "普通员工",
+      "grade": "12.0",
+      "account": "admin",
+      "phone": "1234"
+    }
+  ]
+
+}

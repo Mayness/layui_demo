@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>部门管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="Author" content="ksi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <!-- load css -->
+  <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+  <style>
+    .department_box{
+      display: flex;
+    }
+    #select_box{
+      padding: 10px 100px 0 30px;
+    }
+    .department_box .layui-form{
+      width: 220px;
+      margin: 5px 30px 5px 0;
+    }
+    .department_box .layui-form .select_title{
+      margin-bottom: 10px;
+      margin-left: 2px;
+    }
+    .department_detailShow{
+      padding-top: 10px;
+    }
+    .department_detailShow p{
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="department_box content_padding">
+    <div id="select_box"></div>
+    <div class="department_detailShow">
+      <p class="superior">上级单位名称：<span></span></p>
+      <p class="company_name">单位名称：<span></span></p>
+      <p class="type">单位类型：<span></span></p>
+    </div>
+  </div>
+  <!-- 加载js文件-->
+  <script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+  <script>
+    layui.use(['form','laytpl', 'jquery'], async () => {
+      const $ = layui.jquery
+      let crux = {main: null, second: null, third: null}
+      let select_box = select_tem.innerHTML
+      let view = document.getElementById('select_box')
+      let data = await getSelectData()
+      renderSelect(data, null, null)
+
+      // 选择主公司
+      layui.form.on('select(parent_select)', function(select){
+        if(select.value){
+          let selectData = data.filter(item => {
+            item.selected = false
+            return item.value == select.value
+          })
+          selectData[0].selected = true
+          // 清除selected
+          crux_clear(selectData[0].children)
+          crux = {main: selectData[0].company, second: selectData[0], third: null}
+          changeShow(null, 'rest')
+          renderSelect(data, crux.second.children, null)
+        }
+      });
+
+      // 选择子公司
+      layui.form.on('select(child_select)', function(select){
+        let affi = null
+        if(select.value){
+          let selectData = crux.second.children.filter(item => {
+            item.selected = false
+            return item.value == select.value
+          })
+          selectData[0].selected = true
+          crux.third = selectData[0]
+          // 如果没有下一级部门则直接显示
+          if(!selectData[0].children){
+            changeShow(selectData[0])
+          }else{
+            // 清除显示
+            changeShow(null, 'rest')
+            // 清除selected
+            crux_clear(selectData[0].children)
+            affi = selectData[0].children
+          }
+          renderSelect(data, crux.second.children, affi)
+        }
+      })
+
+      // 选择部门
+      layui.form.on('select(affi_select)', function(select){
+        if(select.value){
+          let selectData = crux.third.children.filter(item => {
+            return item.value == select.value
+          })
+          if(!selectData[0].children){
+            changeShow(selectData[0])
+          }
+        }
+      })
+
+      // 请求数据
+      function getSelectData () {
+        return new Promise( resolve => {
+          $.ajax({
+            url: "../../datas/department_manage.json",
+            type: "get",
+            success(res) {
+              resolve(res)
+            },
+            error(err) {
+              console.log(`请求错误${err}`)
+            }
+          })
+        })
+      }
+      // 渲染dom
+      function renderSelect (data,childData,affiData) {
+        let child_data = childData || null
+        let affi_data = affiData || null
+        layui.laytpl(select_box).render({
+          parent_data: data,
+          child_data,
+          affi_data
+        }, html => {
+          view.innerHTML = html
+          layui.form.render('select')
+        })
+      }
+      // 更改右侧栏显示
+      function changeShow (select_data, type) {
+        if(type == 'rest'){
+          $(".content_padding .superior span, .content_padding .type span, .content_padding .company_name span").text('')
+        }else{
+          $(".content_padding .superior span").text(crux.main)
+          $(".content_padding .type span").text(select_data.type)
+          $(".content_padding .company_name span").text(select_data.company)
+        }
+      }
+
+      $('.content_padding').height($(document).height())
+      $(window).resize(() => {
+        $('.content_padding').height($(document).height())
+      })
+    })
+    function crux_clear(data){
+      for(let i of data){
+        i.selected = false
+      }
+    }
+
+  </script>
+</body>
+</html>
+<script type="text/html" id="select_tem">
+  <div class="layui-form">
+    <div class="company_selectItem">
+      <p class="select_title">主公司</p>
+      <select name="interest" lay-filter="parent_select">
+        <option value=""></option>
+        {{# layui.each(d.parent_data, function(index, item){ }}
+          {{# if(item.selected){ }}
+            <option value="{{ item.value }}" selected>{{ item.company }}</option>
+          {{# }else{ }}
+            <option value="{{ item.value }}">{{ item.company }}</option>
+          {{# } }}
+        {{# }) }}
+      </select>
+    </div>
+  </div>
+  <div class="layui-form">
+    <div class="company_selectItem clear_class">
+      {{# if(d.child_data != null) { }}
+        <p class="select_title">子公司</p>
+        <select name="interest" lay-filter="child_select">
+          <option value=""></option>
+          {{# layui.each(d.child_data, function(index, item){ }}
+            {{# if(item.selected){ }}
+              <option value="{{ item.value }}" selected>{{ item.company }}</option>
+            {{# }else{ }}
+              <option value="{{ item.value }}">{{ item.company }}</option>
+            {{# } }}
+          {{# }) }}
+        </select>
+      {{# } }}
+    </div>
+  </div>
+  <div class="layui-form">
+    <div class="company_selectItem">
+      {{# if(d.affi_data != null) { }}
+      <p class="select_title">单位</p>
+      <select name="interest" lay-filter="affi_select">
+        <option value=""></option>
+        {{# layui.each(d.affi_data, function(index, item){ }}
+        <option value="{{ item.value }}">{{ item.company }}</option>
+        {{# }) }}
+      </select>
+      {{# } }}
+    </div>
+  </div>
+</script>
